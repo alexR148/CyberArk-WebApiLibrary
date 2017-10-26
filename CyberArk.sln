@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberArk.Cmd", "ConsoleApplication1\CyberArk.Cmd.csproj", "{D7DB668D-FB52-4D4B-AA7D-A99CAE7D1136}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberArk.WebApi", "CyberArk.WebApi\CyberArk.WebApi.csproj", "{BB387799-90BD-4291-AF40-B0252950AB81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberArk.WebApi.Tests", "CyberArk.WebApi.Tests\CyberArk.WebApi.Tests.csproj", "{412ED1CA-C7A2-41DD-AA01-503CE0BB2104}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7DB668D-FB52-4D4B-AA7D-A99CAE7D1136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7DB668D-FB52-4D4B-AA7D-A99CAE7D1136}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7DB668D-FB52-4D4B-AA7D-A99CAE7D1136}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7DB668D-FB52-4D4B-AA7D-A99CAE7D1136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB387799-90BD-4291-AF40-B0252950AB81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB387799-90BD-4291-AF40-B0252950AB81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB387799-90BD-4291-AF40-B0252950AB81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB387799-90BD-4291-AF40-B0252950AB81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{412ED1CA-C7A2-41DD-AA01-503CE0BB2104}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{412ED1CA-C7A2-41DD-AA01-503CE0BB2104}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{412ED1CA-C7A2-41DD-AA01-503CE0BB2104}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{412ED1CA-C7A2-41DD-AA01-503CE0BB2104}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
