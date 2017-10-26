@@ -14,7 +14,7 @@ namespace CyberArk.WebApi.PowerShell
             Mandatory                       = true,
             ValueFromPipeline               = false,
             ValueFromPipelineByPropertyName = true,
-            HelpMessage                     = @"A Web URI to the Password Vault WebAccess. For Example 'https://FTPSIBAT020.adminlan.izb'")]
+            HelpMessage                     = @"A Web URI to the Password Vault WebAccess. For Example 'https://server.abc'")]
         public string BaseURI
         { get; set; }
 
