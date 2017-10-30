@@ -22,7 +22,7 @@ namespace CyberArk.WebApi
         /// <param name="sessiontoken">The sessiontoken; can be null</param>
         /// <param name="inputParameter">InputParameter Value of Type T</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter) where T : RestApiInputParameter where U : RestApiResult
+        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter) where T : RestApiParameter where U : RestApiResult
         {
             onNewMessage(string.Format("Do sendRequest Api Call: {0},{1},{2}.",uri,method,contenttype), LogMessageType.Debug);
             
@@ -75,12 +75,7 @@ namespace CyberArk.WebApi
 
                         //Deserialize Result
                         JavaScriptSerializer ds = new JavaScriptSerializer();
-                        result                  = ds.Deserialize<U>(rawResult);
-
-                        //Add additional Info 
-                        //result.PVWAAppName   = this.PVWAAppName;
-                        //result.sessionToken  = this.SessionToken;
-                        //result.BaseURI       = this.BaseURI;
+                        result                  = ds.Deserialize<U>(rawResult);                        
                     }
                 }
                 //Return result
@@ -105,7 +100,7 @@ namespace CyberArk.WebApi
         /// <param name="contenttype">The content type</param>        
         /// <param name="inputParameter">InputParameter Value of Type T</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter) where T : RestApiInputParameter where U : RestApiResult
+        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter) where T : RestApiParameter where U : RestApiResult
         {
             return sendRequest<T, U>(uri, method, contenttype, null, inputParameter);
         }

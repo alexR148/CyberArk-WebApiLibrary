@@ -2,7 +2,8 @@
 
 namespace CyberArk.WebApi.Container
 {
-    class AuthLogon : RestApiInputParameter
+    #region Parameter
+    class AuthLogon : RestApiParameter
     {
         public string username
         { get; set; }
@@ -15,18 +16,20 @@ namespace CyberArk.WebApi.Container
         public int connectionNumber
         { get; set; }       
     }
+    #endregion
 
-  
+    #region result
     class AuthLogonResult : RestApiResult
     {
         public string CyberArkLogonResult
         { get; set; }
     }
+    
 
-   
     class SharedAuthLogonResult : RestApiResult
     {
         public string LogonResult
         { get; set; }
     }
+    #endregion
 }

@@ -2,38 +2,40 @@
 
 namespace CyberArk.WebApi.Container
 {
-    #region Private Abstract Classes
+    #region Abstract Classes
 
     /// <summary>
     /// Default Parameter which always have to be used for input
     /// </summary>
-    abstract class RestApiInputParameter
+    abstract class RestApiParameter
     {}
 
     /// <summary>
     /// Default result Parameters which always will be returned. Neccessary for Powershell
     /// </summary>
     abstract class RestApiResult
-    {
-       
-    }
+    {}       
+    
+    //Defines a Rest Api Member
+    public abstract class RestApiMember
+    {}
 
     #endregion
 
-    #region Private Nullable Classes
+    #region Nullable Classes
 
-    class NullableInput : RestApiInputParameter
+    class NullableInput : RestApiParameter
     {}
 
     class NullableOutput : RestApiResult
     {}
     #endregion
 
-    #region Public
+    #region Powershell Result Base Class
     /// <summary>
     /// A Public result Object. Neccessary for Powershell
     /// </summary>
-    public class PublicApiResult
+    public class PSApiResult
     {
         public Hashtable sessionToken
         { get; set; }

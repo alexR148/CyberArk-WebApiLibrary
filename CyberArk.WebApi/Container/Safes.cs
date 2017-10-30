@@ -2,9 +2,9 @@
 
 namespace CyberArk.WebApi.Container
 {
-    #region Input
+    #region Parameter
 
-    class Add_Safe : RestApiInputParameter
+    class AddSafe_Parameter : RestApiParameter
     {      
         public SafeMembers safe
         { get; set; }
@@ -14,16 +14,15 @@ namespace CyberArk.WebApi.Container
 
     #endregion
 
-    #region Output
-
-    class Add_SafeResult : RestApiResult
+    #region API Result
+    class AddSafe_Result : RestApiResult
     {
         public SafeMembers safe
         { get; set; }
         = new SafeMembers();
     }
 
-    class Get_SafeResult : RestApiResult
+    class GetSafe_Result : RestApiResult
     {
         public SafeMembers GetSafeResult
         { get; set; }
@@ -32,8 +31,8 @@ namespace CyberArk.WebApi.Container
 
     #endregion
 
-    #region Subitems
-    class SafeMembers
+    #region Members
+    class SafeMembers : RestApiMember 
     {
         public string SafeName
         { get; set; }
@@ -50,8 +49,8 @@ namespace CyberArk.WebApi.Container
     }
     #endregion
 
-    #region Public
-    public class SafeResult : PublicApiResult
+    #region Powershell Result
+    public class PSSafeResult : PSApiResult
     {
         public string SafeName
         { get; set; }

@@ -6,8 +6,7 @@ using System.Security;
 namespace CyberArk.WebApi
 {
     public partial class WebServices
-    {
-                      
+    {                     
         /// <summary>
         /// Logon using CyberArk Authentication
         /// </summary>
@@ -16,7 +15,7 @@ namespace CyberArk.WebApi
         /// <param name="newPassword">The new password of the user. This parameter is optional, and enables you to change a password.</param>
         /// <param name="useRadiusAuthentication">Whether or not users will be authenticated via a RADIUS server. Valid values: true/false</param>
         /// <param name="connectionNumber">In order to allow more than one connection for the same user simultaneously, each request should be sent with different 'connectionNumber'. Valid values: 0-100</param>
-        public PublicApiResult LogOn(string username, SecureString password, SecureString newPassword = null,bool? useRadiusAuthentication = null, int connectionNumber = 0) 
+        public PSApiResult LogOn(string username, SecureString password, SecureString newPassword = null,bool? useRadiusAuthentication = null, int connectionNumber = 0) 
         {
             const string URI     = @"/WebServices/auth/Cyberark/CyberArkAuthenticationService.svc/Logon";
             string uri           = WebURI + URI;
@@ -28,17 +27,17 @@ namespace CyberArk.WebApi
                 ConnectionNumber = connectionNumber.ToString();
 
             //Create Authentication Logon Object
-            AuthLogon authlogon                 = new AuthLogon();
-            authlogon.username                  = username;
-            authlogon.password                  = password;
-            authlogon.newPassword               = newPassword;
-            authlogon.useRadiusAuthentication   = useRadiusAuthentication;
-            authlogon.connectionNumber          = connectionNumber;
+            AuthLogon logonParameter                 = new AuthLogon();
+            logonParameter.username                  = username;
+            logonParameter.password                  = password;
+            logonParameter.newPassword               = newPassword;
+            logonParameter.useRadiusAuthentication   = useRadiusAuthentication;
+            logonParameter.connectionNumber          = connectionNumber;
             onNewMessage(string.Format("Authentication Logon Object successfully created."), LogMessageType.Verbose);
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'",uri, VERB_METHOD_POST,JSON_CONTENT_TYPE), LogMessageType.Debug);
-            AuthLogonResult result = sendRequest<AuthLogon, AuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, authlogon);
+            AuthLogonResult result = sendRequest<AuthLogon, AuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter);
             
             //Get Result
             if (result != null)
@@ -49,10 +48,10 @@ namespace CyberArk.WebApi
                 onNewMessage(string.Format("User '{0}' successfully connected to PasswordVault", username), LogMessageType.Info);
             }
             else
-                onNewMessage(string.Format("Unable to connect user '{0}' to PasswordVault", username), LogMessageType.Info);
+                onNewMessage(string.Format("Unable to connect user '{0}' to PasswordVault", username), LogMessageType.Error);
 
             //Return result
-            return createApiResults<PublicApiResult>();                        
+            return createPSApiResults<PSApiResult>();                        
         }
 
         /// <summary>
@@ -104,7 +103,7 @@ namespace CyberArk.WebApi
         ///Make sure that this user can access the the PVWA interface.
         ///Make sure the user only has the permissions in the Vault that they require.
         /// </summary>
-        public PublicApiResult LogOn()
+        public PSApiResult LogOn()
         {
             const string URI = @"/WebServices/auth/Shared/RestfulAuthenticationService.svc/Logon";
             string uri       = WebURI + URI;
@@ -112,12 +111,12 @@ namespace CyberArk.WebApi
             onNewMessage(string.Format("LogOn to PasswordVault using CyberArk Shared Authentication"), LogMessageType.Info);
 
             //Create Authentication Logon Object
-            NullableInput authlogon = new NullableInput();
+            NullableInput logonParameter = new NullableInput();
             onNewMessage(string.Format("Authentication Logon Object successfully created."), LogMessageType.Verbose);
 
             //Do Api Call
             onNewMessage(string.Format("Sending Shared LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            SharedAuthLogonResult result = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, authlogon);
+            SharedAuthLogonResult result = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter);
 
             //Validate result
             if (result != null)
@@ -126,14 +125,14 @@ namespace CyberArk.WebApi
                 onNewMessage(string.Format("Successfully connected to PasswordVault"), LogMessageType.Info);
             }
             else
-                onNewMessage(string.Format("Unable to connect to PasswordVault using Shared Authentication"), LogMessageType.Info);
+                onNewMessage(string.Format("Unable to connect to PasswordVault using Shared Authentication"), LogMessageType.Error);
             
             //Get Result
             SessionToken.Add(SESSION_TOKEN_HEADER, result.LogonResult);
             Authenticationtype = AuthenticationType.SharedLogon;
 
             //Return result
-            return createApiResults<PublicApiResult>();
+            return createPSApiResults<PSApiResult>();
         }
     }
 }

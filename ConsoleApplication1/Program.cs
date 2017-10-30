@@ -1,7 +1,5 @@
 ﻿using System;
 using CyberArk.WebApi;
-using System.Security;
-using CyberArk.WebApi.Extensions;
 using CyberArk.WebApi.Logging;
 
 namespace CyberArk.Cmd
@@ -13,15 +11,17 @@ namespace CyberArk.Cmd
 
         static void Main(string[] args)
         {
-            WebServices ws   = new WebServices(@"Enter Server here ");
-            ws.NewLogMessage += Ws_NewMessage;           
+            WebServices ws   = new WebServices(@"https://myserv.org.com");
+            ws.NewLogMessage += Ws_NewMessage;
             //Console.WriteLine("Enter User:");
-            string a = "user";
+            //string a = "user";
             //Console.WriteLine("Enter Password:");
-            SecureString s = "blabla".ToSecureString();
-            ws.LogOn(a,s);
-            //ws.LogOn();
-            ws.Get_PASSafe("Safe1");
+            //SecureString s = "blabla".ToSecureString();
+            //ws.LogOn(a,s);
+
+            //Use Shared Auth.
+            ws.LogOn();
+            var r  = ws.List_PASSafeMembers("75052");
             ws.LogOff(); 
         }
 
