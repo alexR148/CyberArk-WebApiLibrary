@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Container\Interfaces.cs" />
     <Compile Include="Container\SafeMembers.cs" />
     <Compile Include="Container\Safes.cs" />
     <Compile Include="Internal\AuthenticationType.cs" />
@@ -54,6 +55,8 @@
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogMessageType.cs" />
     <Compile Include="Logging\MessageArgs.cs" />
+    <Compile Include="other\PD.cs" />
+    <Compile Include="other\Roles.cs" />
     <Compile Include="PowerShell\New-CASharedSession.cs" />
     <Compile Include="PowerShell\New-CAWebService.cs" />
     <Compile Include="Container\Authentication.cs" />
@@ -66,7 +69,9 @@
     <Compile Include="WebServices_SafeMembers.cs" />
     <Compile Include="WebServices_Safes.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="other\roles.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

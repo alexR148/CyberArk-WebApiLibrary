@@ -40,8 +40,7 @@ namespace CyberArk.WebApi
             if (result != null)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeResult>();
-                copyProperties(result.safe, psResult);
+                psResult = createPSApiResults<PSSafeResult>(result.safe);                
                 onNewMessage(string.Format("Safe '{0}' successfully created", SafeName), LogMessageType.Info);                           
             }
             else
@@ -72,8 +71,7 @@ namespace CyberArk.WebApi
             if (result != null)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeResult>();
-                copyProperties(result.GetSafeResult, psResult);
+                psResult = createPSApiResults<PSSafeResult>(result.GetSafeResult);                
                 onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);              
             }
             else

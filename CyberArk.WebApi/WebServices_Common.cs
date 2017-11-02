@@ -104,23 +104,32 @@ namespace CyberArk.WebApi
         /// <typeparam name="T"></typeparam>
         /// <param name="apiresult">apply an apiresult to do copy its values to a flat object</param>
         /// <returns></returns>
-        private T createPSApiResults<T>()  where T : PSApiResult, new()
+        private T createPSApiResults<T>(params object[] objectsToCopy)  where T : PSApiResult, new()
         {
             //Create PSResult Class of Type T
             T result = new T();
 
-            //Save default Values
-            result.BaseURI      = this.BaseURI;
-            result.PVWAAppName  = this.PVWAAppName;
-            result.sessionToken = this.SessionToken;
+            //If Object implements ISessionInformation, then add information to object
+            applySessionInfo(result);
 
+            if (objectsToCopy != null)
+            {
+                foreach (object o in objectsToCopy)
+                    copyValuesToPSApiResult(o, result);
+            }
+            
             //Only copy if apiresult is not null
             //if (apiresult != null)
             //    createPSApiResult_toFlat_recurse(apiresult, result);
 
-            //Return the result
+                //Return the result
             return result; 
         }
+        private T createPSApiResults<T>() where T : PSApiResult, new()
+        {
+            return createPSApiResults<T>(null);
+        }
+
 
         ///// <summary>
         ///// Copies property values from a hierarchic object to a flat object. Flat objects are neccessary for Powershell Piping 
@@ -132,43 +141,54 @@ namespace CyberArk.WebApi
         //    //Abort if one of the two object has null values
         //    if (source == null || dest == null) return;
 
-        //    //Get type of both
-        //    Type TSource = source.GetType();
-        //    Type TDest   = dest.GetType();
+            //    //Get type of both
+            //    Type TSource = source.GetType();
+            //    Type TDest   = dest.GetType();
 
-        //    //Get all properties of source object
-        //    PropertyInfo[] propertiesSource = TSource.GetProperties();
-          
-        //    //Iterate all properties
-        //    foreach (PropertyInfo prop in propertiesSource)
-        //    {              
-        //        //Get value
-        //        var value = prop.GetValue(source);
+            //    //Get all properties of source object
+            //    PropertyInfo[] propertiesSource = TSource.GetProperties();
 
-        //        //Check value. Do nothing if result is null
-        //        if (value != null)
-        //        {
-        //            //Get type of result
-        //            Type Tvalue = value.GetType();
-                   
-        //            //if type is a APIMember then copy Properties. For PS it is neccessary that the result is flat
-        //            if (Tvalue.IsSubclassOf(typeof(RestApiMember)))                    
-        //                createPSApiResult_toFlat_recurse(value, dest);                   
-        //            else
-        //            {
-        //                //Get dest property
-        //                PropertyInfo destProp = TDest.GetProperty(prop.Name);
+            //    //Iterate all properties
+            //    foreach (PropertyInfo prop in propertiesSource)
+            //    {              
+            //        //Get value
+            //        var value = prop.GetValue(source);
 
-        //                //Set value to dest property
-        //                if (destProp != null)
-        //                    destProp.SetValue(dest, value);
-        //            }
-        //        }                
-        //    }         
-        //}
+            //        //Check value. Do nothing if result is null
+            //        if (value != null)
+            //        {
+            //            //Get type of result
+            //            Type Tvalue = value.GetType();
 
-        
-        private void copyProperties(object source, object dest)
+            //            //if type is a APIMember then copy Properties. For PS it is neccessary that the result is flat
+            //            if (Tvalue.IsSubclassOf(typeof(RestApiMember)))                    
+            //                createPSApiResult_toFlat_recurse(value, dest);                   
+            //            else
+            //            {
+            //                //Get dest property
+            //                PropertyInfo destProp = TDest.GetProperty(prop.Name);
+
+            //                //Set value to dest property
+            //                if (destProp != null)
+            //                    destProp.SetValue(dest, value);
+            //            }
+            //        }                
+            //    }         
+            //}
+
+        private void applySessionInfo(object source)
+        {
+            ISessionInformation resultTmp = source as ISessionInformation;
+            if (resultTmp != null)
+            {
+                //Save default Values
+                resultTmp.BaseURI      = this.BaseURI;
+                resultTmp.PVWAAppName  = this.PVWAAppName;
+                resultTmp.sessionToken = this.SessionToken;
+            }
+        }
+
+        private void copyValuesToPSApiResult(object source, object dest)
         { 
             if (source == null || dest == null) return; 
 

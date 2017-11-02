@@ -1,10 +1,5 @@
 ﻿using CyberArk.WebApi.Container;
 using CyberArk.WebApi.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CyberArk.WebApi
 {
@@ -24,20 +19,15 @@ namespace CyberArk.WebApi
             ListSafeMembers_Result result = sendRequest<NullableInput, ListSafeMembers_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, memberParameters);
 
             //apply sessioninformation to result (neccessary for Powershell)
-            foreach (var r in result.members)
-            {
-                r.sessionToken   = SessionToken;
-                r.BaseURI        = BaseURI;
-                r.PVWAAppName    = PVWAAppName; 
-            }
+            foreach (SafeMember_Result r in result.members)
+                applySessionInfo(r);
 
             //Get Result
             PSSafeMembersResult psResult = null;
             if (result != null)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeMembersResult>();
-                copyProperties(result, psResult);
+                psResult = createPSApiResults<PSSafeMembersResult>(result);                
                 onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);
             }
             else

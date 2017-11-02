@@ -9,9 +9,9 @@ namespace CyberArk.WebApi.Container
     /// </summary>
     class ListSafeMembers_Result : RestApiResult
     {
-        public Member[] members
+        public SafeMember_Result[] members
         { get; set; }
-            = new Member[] { };       
+            = new SafeMember_Result[] { };       
     }
 
     #endregion
@@ -21,50 +21,21 @@ namespace CyberArk.WebApi.Container
     /// <summary>
     /// Class describing a member and its save permissions
     /// </summary>
-    public class Member : RestApiMember
+    public class SafeMember_Result : RestApiMemberSessionInfo
     {
         public string UserName
         { get; set; }
         = string.Empty;
 
-        public PermissionList Permissions
+        public ListSafeMemberPermission_Result Permissions
         { get; set; }
-        = new PermissionList();
-
-        //Additional Sessioninformation. Required for Powershell
-        #region SessionInformation
-        public Hashtable sessionToken
-        { get; set; }
-
-        /// <summary>
-        /// Returns the Complete Uri String
-        /// </summary>
-        public string WebURI
-        {
-            get
-            {
-                return BaseURI + "/" + PVWAAppName;
-            }
-        }
-
-        /// <summary>
-        /// The VaultName
-        /// </summary>
-        public string PVWAAppName
-        { get; set; }
-
-        /// <summary>
-        /// WebAccessUri
-        /// </summary>
-        public string BaseURI
-        { get; set; }
-        #endregion
+        = new ListSafeMemberPermission_Result();      
     }
 
     /// <summary>
-    /// List of avaiable permissions
+    /// List of avaiable permissions returned by function List-Safemembers
     /// </summary>
-    public class PermissionList : RestApiMember
+    public class ListSafeMemberPermission_Result : RestApiMember
     {
         public bool Add
         { get; set; }
@@ -103,14 +74,63 @@ namespace CyberArk.WebApi.Container
         public bool ViewMembers
         { get; set; }
     }
+
+    /// <summary>
+    /// List of Permissions for function Add-SafeMember or Update-SafeMember
+    /// </summary>
+    public class AddSafeMemberPermissions : RestApiMember
+    {
+        public bool UseAccounts
+        { get; set; }
+        public bool RetrieveAccounts
+        { get; set; }
+        public bool ListAccounts
+        { get; set; }
+        public bool AddAccounts
+        { get; set; }
+        public bool UpdateAccountContent
+        { get; set; }
+        public bool UpdateAccountProperties
+        { get; set; }
+        public bool InitiateCPMAccountManagementOperations
+        { get; set; }
+        public bool SpecifyNextAccountContent
+        { get; set; }
+        public bool RenameAccounts
+        { get; set; }
+        public bool DeleteAccounts
+        { get; set; }
+        public bool UnlockAccounts
+        { get; set; }
+        public bool ManageSafe
+        { get; set; }
+        public bool ManageSafeMembers
+        { get; set; }
+        public bool BackupSafe
+        { get; set; }
+        public bool ViewAuditLog
+        { get; set; }
+        public bool ViewSafeMembers
+        { get; set; }
+        public int RequestsAuthorizationLevel
+        { get; set; }
+        public bool AccessWithoutConfirmation
+        { get; set; }
+        public bool CreateFolders
+        { get; set; }
+        public bool DeleteFolders
+        { get; set; }
+        public bool MoveAccountsAndFolders
+        { get; set; }
+    }   
     #endregion
 
     #region Powershell Result
     public class PSSafeMembersResult : PSApiResult
     {
-        public Member[] members
+        public SafeMember_Result[] members
         { get; set; }
-            = new Member[] { };
+            = new SafeMember_Result[] { };
     }
     #endregion
 

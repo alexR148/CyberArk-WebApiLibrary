@@ -15,7 +15,7 @@ namespace CyberArk.WebApi
         /// <param name="newPassword">The new password of the user. This parameter is optional, and enables you to change a password.</param>
         /// <param name="useRadiusAuthentication">Whether or not users will be authenticated via a RADIUS server. Valid values: true/false</param>
         /// <param name="connectionNumber">In order to allow more than one connection for the same user simultaneously, each request should be sent with different 'connectionNumber'. Valid values: 0-100</param>
-        public PSApiResult LogOn(string username, SecureString password, SecureString newPassword = null,bool? useRadiusAuthentication = null, int connectionNumber = 0) 
+        public PSApiResultSessionInfo LogOn(string username, SecureString password, SecureString newPassword = null,bool? useRadiusAuthentication = null, int connectionNumber = 0) 
         {
             const string URI     = @"/WebServices/auth/Cyberark/CyberArkAuthenticationService.svc/Logon";
             string uri           = WebURI + URI;
@@ -51,7 +51,7 @@ namespace CyberArk.WebApi
                 onNewMessage(string.Format("Unable to connect user '{0}' to PasswordVault", username), LogMessageType.Error);
 
             //Return result
-            return createPSApiResults<PSApiResult>();                        
+            return createPSApiResults<PSApiResultSessionInfo>();                        
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace CyberArk.WebApi
         ///Make sure that this user can access the the PVWA interface.
         ///Make sure the user only has the permissions in the Vault that they require.
         /// </summary>
-        public PSApiResult LogOn()
+        public PSApiResultSessionInfo LogOn()
         {
             const string URI = @"/WebServices/auth/Shared/RestfulAuthenticationService.svc/Logon";
             string uri       = WebURI + URI;
@@ -123,16 +123,17 @@ namespace CyberArk.WebApi
             {                       
                 Authenticationtype  = AuthenticationType.SharedLogon;
                 onNewMessage(string.Format("Successfully connected to PasswordVault"), LogMessageType.Info);
+
+                //Get Result
+                SessionToken.Add(SESSION_TOKEN_HEADER, result.LogonResult);
+                Authenticationtype = AuthenticationType.SharedLogon;
+                
             }
             else
                 onNewMessage(string.Format("Unable to connect to PasswordVault using Shared Authentication"), LogMessageType.Error);
-            
-            //Get Result
-            SessionToken.Add(SESSION_TOKEN_HEADER, result.LogonResult);
-            Authenticationtype = AuthenticationType.SharedLogon;
 
             //Return result
-            return createPSApiResults<PSApiResult>();
+            return createPSApiResults<PSApiResultSessionInfo>();
         }
     }
 }

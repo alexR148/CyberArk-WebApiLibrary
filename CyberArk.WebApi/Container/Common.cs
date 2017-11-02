@@ -4,21 +4,63 @@ namespace CyberArk.WebApi.Container
 {
     #region Abstract Classes
 
+    
+    
     /// <summary>
-    /// Default Parameter which always have to be used for input
+    /// The Base Class of all Containers
     /// </summary>
-    abstract class RestApiParameter
+    public abstract class CAContainer
+    { }
+
+    /// <summary>
+    /// Base Parameter which always have to be used for input
+    /// </summary>
+    abstract class RestApiParameter : CAContainer
     {}
 
     /// <summary>
-    /// Default result Parameters which always will be returned. Neccessary for Powershell
+    /// Base result Parameters which always will be returned. Neccessary for Powershell
     /// </summary>
-    abstract class RestApiResult
-    {}       
-    
-    //Defines a Rest Api Member
-    public abstract class RestApiMember
-    {}
+    abstract class RestApiResult : CAContainer
+    { }
+
+    /// <summary>
+    /// Defines a Base Rest Api Member
+    /// </summary>
+    public abstract class RestApiMember : CAContainer
+    { }
+
+    /// <summary>
+    /// Defines an Api Member containing sessioninformation
+    /// </summary>
+    public class RestApiMemberSessionInfo : RestApiMember, ISessionInformation
+    {
+        public Hashtable sessionToken
+        { get; set; }
+
+        /// <summary>
+        /// Returns the Complete Uri String
+        /// </summary>
+        public string WebURI
+        {
+            get
+            {
+                return commonFunctions.Get_WebUri(BaseURI, PVWAAppName);
+            }
+        }
+
+        /// <summary>
+        /// The VaultName
+        /// </summary>
+        public string PVWAAppName
+        { get; set; }
+
+        /// <summary>
+        /// WebAccessUri
+        /// </summary>
+        public string BaseURI
+        { get; set; }
+    }
 
     #endregion
 
@@ -32,10 +74,15 @@ namespace CyberArk.WebApi.Container
     #endregion
 
     #region Powershell Result Base Class
+
+
+    public abstract class PSApiResult : CAContainer
+    { }
+    
     /// <summary>
-    /// A Public result Object. Neccessary for Powershell
+    /// A Public result Object containing sessioninformation. Neccessary for Powershell
     /// </summary>
-    public class PSApiResult
+    public class PSApiResultSessionInfo : PSApiResult, ISessionInformation
     {
         public Hashtable sessionToken
         { get; set; }
@@ -46,8 +93,8 @@ namespace CyberArk.WebApi.Container
         public string WebURI
         {
             get
-            {
-                return BaseURI + "/" + PVWAAppName;
+            {                
+                return commonFunctions.Get_WebUri(BaseURI, PVWAAppName);
             }
         }
 
@@ -64,4 +111,19 @@ namespace CyberArk.WebApi.Container
         { get; set; }
     }
     #endregion
+
+    #region static classes
+    internal static class commonFunctions
+    {
+        public static string Get_WebUri(string BaseURI, string PVWAAppName)
+        {
+            if (string.IsNullOrWhiteSpace(BaseURI) || string.IsNullOrWhiteSpace(PVWAAppName))
+                return string.Empty;
+            return BaseURI + "/" + PVWAAppName;
+        }
+    }
+    
+    #endregion
+
+
 }

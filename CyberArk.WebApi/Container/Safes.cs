@@ -50,7 +50,7 @@ namespace CyberArk.WebApi.Container
     #endregion
 
     #region Powershell Result
-    public class PSSafeResult : PSApiResult
+    public class PSSafeResult : PSApiResultSessionInfo
     {
         public string SafeName
         { get; set; }
