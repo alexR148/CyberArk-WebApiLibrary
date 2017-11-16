@@ -45,6 +45,10 @@ namespace CyberArk.WebApi.Internal
                 if (value == null || ignoreProp)
                     continue;
 
+                //Dont add empty strings
+                if (value.GetType() == typeof(string) && (string)value == string.Empty)
+                    continue;
+
                 //Do not add integer with value of 0
                 if (value.GetType() == typeof(int) && (int)value == 0)
                     continue;

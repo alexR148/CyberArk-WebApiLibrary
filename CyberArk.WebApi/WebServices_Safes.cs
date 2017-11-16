@@ -57,7 +57,8 @@ namespace CyberArk.WebApi
         public PSSafeResult Get_PASSafe(string SafeName)
         {
             const string URI = @"/WebServices/PIMServices.svc/Safes";
-            string uri       = WebURI + URI + "/" + SafeName;
+            string uri       = System.Uri.EscapeUriString( WebURI + URI + "/" + SafeName);
+            
 
             //Create Safe Add Object
             NullableInput  safeParameters = new NullableInput();

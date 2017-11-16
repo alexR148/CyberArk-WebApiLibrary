@@ -22,12 +22,13 @@ namespace CyberArk.Cmd
             //SecureString s = ;
             //ws.LogOn(a,s);
 
-            PD.CreateRoleJSON(); 
+           // PD.CreateRoleJSON(); 
 
             //Use Shared Auth.
-            //ws.LogOn();
+            ws.LogOn();
+            ws.Add_PASSafe("75054PU", 12, 0, "75052PU"); 
             //var r  = ws.List_PASSafeMembers("75052");
-            //ws.LogOff(); 
+            ws.LogOff(); 
         }
 
         private static void Ws_NewMessage(object sender, MessageArgs e)

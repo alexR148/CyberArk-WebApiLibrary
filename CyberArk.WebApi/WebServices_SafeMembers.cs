@@ -9,7 +9,7 @@ namespace CyberArk.WebApi
         public PSSafeMembersResult List_PASSafeMembers(string SafeName)
         {
             const string URI = @"/WebServices/PIMServices.svc/Safes";
-            string uri       = string.Format ("{0}{1}/{2}/Members", WebURI,URI,SafeName);
+            string uri       = System.Uri.EscapeUriString(string.Format ("{0}{1}/{2}/Members", WebURI,URI,SafeName));
 
             //Create Safe Add Object
             NullableInput memberParameters = new NullableInput();

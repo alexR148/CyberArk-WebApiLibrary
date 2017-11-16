@@ -199,8 +199,8 @@ namespace CyberArk.WebApi
             foreach (PropertyInfo prop in propertiesSource) 
             {                              
                 //Get value 
-                var value = prop.GetValue(source);  
-                PropertyInfo destProp = TDest.GetProperty(prop.Name);
+                var value               = prop.GetValue(source);  
+                PropertyInfo destProp   = TDest.GetProperty(prop.Name);
 
                 //Set value to des 
                 if (destProp != null) 
