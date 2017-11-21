@@ -10,7 +10,7 @@ using System.Collections;
 namespace CyberArk.WebApi
 {
     public partial class WebServices
-    {      
+    {
         /// <summary>
         /// Sends a WebRequest to the URI and receive a result
         /// </summary>
@@ -21,8 +21,9 @@ namespace CyberArk.WebApi
         /// <param name="contenttype">The content type</param>
         /// <param name="sessiontoken">The sessiontoken; can be null</param>
         /// <param name="inputParameter">InputParameter Value of Type T</param>
+        /// <param name="wrResult">The result of WebResponse</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter) where T : RestApiParameter where U : RestApiResult
+        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter, out WebResponseResult wrResult) where T : RestApiParameter where U : RestApiResult
         {
             onNewMessage(string.Format("Do sendRequest Api Call: {0},{1},{2}.",uri,method,contenttype), LogMessageType.Debug);
             
@@ -38,10 +39,14 @@ namespace CyberArk.WebApi
             else
                 json = @"{}"; //Use empty json
 
+            //Only allow TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            
             //Create WebRequest
             WebRequest restRequest  = WebRequest.Create(uri);
             restRequest.Method      = method;
             restRequest.ContentType = contenttype;
+            
 
             //Apply Sessiontoken
             if (sessiontoken != null && sessiontoken.Count > 0)
@@ -75,8 +80,12 @@ namespace CyberArk.WebApi
 
                         //Deserialize Result
                         JavaScriptSerializer ds = new JavaScriptSerializer();
-                        result                  = ds.Deserialize<U>(rawResult);                        
+                        result                  = ds.Deserialize<U>(rawResult);                                                                 
                     }
+                    HttpWebResponse res = ((HttpWebResponse)(restResponse));
+                    onNewMessage(string.Format("{0},{1} - {2}", (int)res.StatusCode,res.StatusCode,res.StatusDescription), LogMessageType.Debug);
+                    wrResult = new WebResponseResult() { StatusCode = res.StatusCode, StatusDescription = res.StatusDescription };
+
                 }
                 //Return result
                 onNewMessage(string.Format("Api Call successfully done."), LogMessageType.Debug);
@@ -85,7 +94,8 @@ namespace CyberArk.WebApi
             catch (WebException ex)
             {
                 HttpWebResponse res = ((HttpWebResponse)(ex.Response));
-                onNewMessage(string.Format("{0} - {1}", ex.Message,res.StatusDescription  ), LogMessageType.Error);
+                onNewMessage(string.Format("{0},{1} - {2} {3}", (int)res.StatusCode, res.StatusCode,ex.Message,res.StatusDescription  ), LogMessageType.Error);
+                wrResult = new WebResponseResult() { StatusCode = res.StatusCode, StatusDescription = res.StatusDescription };
             }
             return default(U);
         }
@@ -100,15 +110,40 @@ namespace CyberArk.WebApi
         /// <param name="contenttype">The content type</param>        
         /// <param name="inputParameter">InputParameter Value of Type T</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter) where T : RestApiParameter where U : RestApiResult
+        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter,out WebResponseResult wrResult) where T : RestApiParameter where U : RestApiResult
         {
-            return sendRequest<T, U>(uri, method, contenttype, null, inputParameter);
-        }
-
+            return sendRequest<T, U>(uri, method, contenttype, null, inputParameter,out wrResult);
+        }     
     }
 
+    /// <summary>
+    /// Web Response Result
+    /// </summary>
+    class WebResponseResult
+    {
+        /// <summary>
+        /// The ErrorCode a WebServer returns
+        /// </summary>
+        public int StatusCodeNumber
+        {
+            get
+            {
+                return (int)StatusCode;
+            }               
+        }
 
+        /// <summary>
+        /// The statuscode a WebServer returns
+        /// </summary>
+        public HttpStatusCode StatusCode
+        { get; set; }
 
+        /// <summary>
+        /// The statusdesription a WebServer returns
+        /// </summary>
+        public string StatusDescription
+        { get; set; }
+    }
 }
 
 

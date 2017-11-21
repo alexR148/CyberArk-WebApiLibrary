@@ -16,18 +16,15 @@ namespace CyberArk.Cmd
         {
             WebServices ws   = new WebServices(PD.GetServer());
             ws.NewLogMessage += Ws_NewMessage;
-            //Console.WriteLine("Enter User:");
-            string a = PD.GetUser();
-            //Console.WriteLine("Enter Password:");
-            //SecureString s = ;
-            //ws.LogOn(a,s);
+           
+            
+           
+            ws.LogOn(PD.GetUser(),PD.GetPW().ToSecureString());
+            ws.Add_PASSafe("75054PU", 12, 0, "75054PU");
 
-           // PD.CreateRoleJSON(); 
+            ws.Remove_PASSafe("75054PU");
+            
 
-            //Use Shared Auth.
-            ws.LogOn();
-            ws.Add_PASSafe("75054PU", 12, 0, "75052PU"); 
-            //var r  = ws.List_PASSafeMembers("75052");
             ws.LogOff(); 
         }
 

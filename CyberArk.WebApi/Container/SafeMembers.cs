@@ -126,7 +126,7 @@ namespace CyberArk.WebApi.Container
     #endregion
 
     #region Powershell Result
-    public class PSSafeMembersResult : PSApiResult
+    public class PSSafeMembers_Result : PSApiResult
     {
         public SafeMember_Result[] members
         { get; set; }

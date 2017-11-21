@@ -15,13 +15,13 @@ namespace CyberArk.WebApi.Container
     /// <summary>
     /// Base Parameter which always have to be used for input
     /// </summary>
-    abstract class RestApiParameter : CAContainer
+    public abstract class RestApiParameter : CAContainer
     {}
 
     /// <summary>
     /// Base result Parameters which always will be returned. Neccessary for Powershell
     /// </summary>
-    abstract class RestApiResult : CAContainer
+    public abstract class RestApiResult : CAContainer
     { }
 
     /// <summary>
@@ -66,10 +66,10 @@ namespace CyberArk.WebApi.Container
 
     #region Nullable Classes
 
-    class NullableInput : RestApiParameter
+    public class NullableInput : RestApiParameter
     {}
 
-    class NullableOutput : RestApiResult
+    public class NullableOutput : RestApiResult
     {}
     #endregion
 

@@ -15,7 +15,7 @@ namespace CyberArk.WebApi
         /// <param name="Description"></param>
         /// <param name="OLACEnabled"></param>
         /// <param name="ManagingCPM"></param>
-        public PSSafeResult Add_PASSafe(string SafeName, int NumberOfVersionsRetention, int NumberOfDaysRetention
+        public PSSafe_Result Add_PASSafe(string SafeName, int NumberOfVersionsRetention, int NumberOfDaysRetention
             , string Description = null, bool? OLACEnabled = null, string ManagingCPM = null)
         {
             const string URI = @"/WebServices/PIMServices.svc/Safes";
@@ -32,15 +32,16 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            AddSafe_Result result = sendRequest<AddSafe_Parameter, AddSafe_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters);
+            WebResponseResult wrResult;
+            AddSafe_Result result = sendRequest<AddSafe_Parameter, AddSafe_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters,out wrResult);
 
 
             //Get Result
-            PSSafeResult psResult = null; 
+            PSSafe_Result psResult = null; 
             if (result != null)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeResult>(result.safe);                
+                psResult = createPSApiResults<PSSafe_Result>(result.AddSafeResult);                
                 onNewMessage(string.Format("Safe '{0}' successfully created", SafeName), LogMessageType.Info);                           
             }
             else
@@ -54,7 +55,7 @@ namespace CyberArk.WebApi
         /// </summary>
         /// <param name="SafeName"></param>
         /// <returns></returns>
-        public PSSafeResult Get_PASSafe(string SafeName)
+        public PSSafe_Result Get_PASSafe(string SafeName)
         {
             const string URI = @"/WebServices/PIMServices.svc/Safes";
             string uri       = System.Uri.EscapeUriString( WebURI + URI + "/" + SafeName);
@@ -65,20 +66,48 @@ namespace CyberArk.WebApi
             
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            GetSafe_Result result = sendRequest<NullableInput, GetSafe_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, safeParameters);
+            WebResponseResult wrResult;
+            GetSafe_Result result = sendRequest<NullableInput, GetSafe_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, safeParameters,out  wrResult);
 
             //Get Result
-            PSSafeResult psResult = null;
+            PSSafe_Result psResult = null;
             if (result != null)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeResult>(result.GetSafeResult);                
+                psResult = createPSApiResults<PSSafe_Result>(result.GetSafeResult);                
                 onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);              
             }
             else
                 onNewMessage(string.Format("Unable to query safe '{0}'", SafeName), LogMessageType.Error);
 
             return psResult;
+        }
+
+        /// <summary>
+        /// Removes a Safe
+        /// </summary>
+        /// <param name="SafeName">the name of the safe which has to be removed</param>
+        /// <returns></returns>
+        public NullableOutput Remove_PASSafe(string SafeName)
+        {
+            const string URI = @"/WebServices/PIMServices.svc/Safes";
+            string uri = System.Uri.EscapeUriString(WebURI + URI + "/" + SafeName);
+          
+            //Do Api Call
+            onNewMessage(string.Format("Sending RemoveSafe request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE), LogMessageType.Debug);
+            WebResponseResult wrResult;
+            NullableOutput result = sendRequest<NullableInput, NullableOutput>(uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE, SessionToken, new NullableInput(), out wrResult);
+
+            //Get Result          
+            if (result != null)
+            {
+                //Create PSResult               
+                onNewMessage(string.Format("Safe '{0}' successfully deleted", SafeName), LogMessageType.Info);
+            }
+            else
+                onNewMessage(string.Format("Unable to delete safe '{0}'", SafeName), LogMessageType.Error);
+
+            return result;
         }
 
     }

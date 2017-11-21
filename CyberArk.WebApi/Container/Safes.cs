@@ -17,7 +17,7 @@ namespace CyberArk.WebApi.Container
     #region API Result
     class AddSafe_Result : RestApiResult
     {
-        public SafeMembers safe
+        public SafeMembers AddSafeResult
         { get; set; }
         = new SafeMembers();
     }
@@ -50,7 +50,7 @@ namespace CyberArk.WebApi.Container
     #endregion
 
     #region Powershell Result
-    public class PSSafeResult : PSApiResultSessionInfo
+    public class PSSafe_Result : PSApiResultSessionInfo
     {
         public string SafeName
         { get; set; }

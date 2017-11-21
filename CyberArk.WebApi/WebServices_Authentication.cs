@@ -2,11 +2,28 @@
 using CyberArk.WebApi.Logging;
 using CyberArk.WebApi.Container;
 using System.Security;
+using CyberArk.WebApi.Extensions;
 
 namespace CyberArk.WebApi
 {
     public partial class WebServices
-    {                     
+    {
+
+      
+
+        /// <summary>
+        /// Logon using CyberArk Authentication
+        /// </summary>
+        /// <param name="username">The name of the user who will logon to the Vault.</param>
+        /// <param name="password">The password of the user.</param>
+        /// <param name="newPassword">The new password of the user. This parameter is optional, and enables you to change a password.</param>
+        /// <param name="useRadiusAuthentication">Whether or not users will be authenticated via a RADIUS server. Valid values: true/false</param>
+        /// <param name="connectionNumber">In order to allow more than one connection for the same user simultaneously, each request should be sent with different 'connectionNumber'. Valid values: 0-100</param>
+        public PSApiResultSessionInfo LogOn(string username, string password, string newPassword = null, bool? useRadiusAuthentication = null, int connectionNumber = 0)
+        {
+            return LogOn(username, password.ToSecureString(), newPassword?.ToSecureString() ?? null, useRadiusAuthentication, connectionNumber);
+        }
+
         /// <summary>
         /// Logon using CyberArk Authentication
         /// </summary>
@@ -37,7 +54,8 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'",uri, VERB_METHOD_POST,JSON_CONTENT_TYPE), LogMessageType.Debug);
-            AuthLogonResult result = sendRequest<AuthLogon, AuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter);
+            WebResponseResult wrResult;
+            AuthLogonResult result = sendRequest<AuthLogon, AuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter,out wrResult);
             
             //Get Result
             if (result != null)
@@ -80,7 +98,8 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOff request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            sendRequest<NullableInput, NullableOutput>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, new NullableInput());
+            WebResponseResult wrResult;
+            sendRequest<NullableInput, NullableOutput>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, new NullableInput(),out wrResult);
 
             //Reset Token
             SessionToken.Clear();
@@ -116,7 +135,8 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending Shared LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            SharedAuthLogonResult result = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter);
+            WebResponseResult wrResult;
+            SharedAuthLogonResult result = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter,out wrResult);
 
             //Validate result
             if (result != null)

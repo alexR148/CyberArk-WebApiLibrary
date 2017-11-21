@@ -13,6 +13,7 @@ namespace CyberArk.WebApi
 
         const string VERB_METHOD_POST     = "POST";
         const string VERB_METHOD_GET      = "GET";
+        const string VERB_METHOD_DELETE   = "DELETE";
 
         const string DEFAULT_VAULT        = "passwordVault";
         const string SESSION_TOKEN_HEADER = "Authorization";
