@@ -4,7 +4,7 @@ namespace CyberArk.WebApi.Container
 {
     #region Parameter
 
-    class AddSafe_Parameter : RestApiParameter
+    class AddSafe_Method : RestApiMethod
     {      
         public SafeMembers safe
         { get; set; }
@@ -32,7 +32,7 @@ namespace CyberArk.WebApi.Container
     #endregion
 
     #region Members
-    class SafeMembers : RestApiMember 
+    class SafeMembers : RestApiParameter 
     {
         public string SafeName
         { get; set; }

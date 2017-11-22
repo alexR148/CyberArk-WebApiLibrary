@@ -1,41 +1,101 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace CyberArk.WebApi.Container
 {
+    #region API Parameter
+
+    /// <summary>
+    /// Required for RestAPI Method Add Safe Member
+    /// </summary>
+    class AddSafeMember_Method : RestApiMethod
+    {
+        public AddSafeMember_Parameter member
+        { get; set; }
+        = new AddSafeMember_Parameter();
+    }
+
+    #endregion
+
     #region API Result
 
     /// <summary>
-    /// Result class for RestAPI List Safe Members Function
+    /// Result class for RestAPI List Safe Members Method
     /// </summary>
     class ListSafeMembers_Result : RestApiResult
     {
-        public SafeMember_Result[] members
+        public SafeMember_Parameter[] members
         { get; set; }
-            = new SafeMember_Result[] { };       
+            = new SafeMember_Parameter[] { };       
+    }
+
+    public class AddSafeMember_Result : RestApiResult
+    {
+        public AddSafeMember2_Parameter member
+        { get; set; }
+        = new AddSafeMember2_Parameter();
     }
 
     #endregion
 
     #region Members
 
+    class AddSafeMember_Parameter : RestApiParameter
+    {
+        public string MemberName
+        { get; set; }
+
+        public string SearchIn
+        { get; set; }
+
+        public string MembershipExpirationDate
+        { get; set; }
+
+        public Hashtable Permissions
+        { get; set; }
+        
+    }
+
+
+    public class AddSafeMember2_Parameter : RestApiParameter
+    {
+        public string MemberName
+        { get; set; }
+       
+        public string MembershipExpirationDate
+        { get; set; }
+
+        public string SearchIn
+        { get; set; }
+
+        //public Hashtable Permissions
+        //{ get; set; }
+       
+        public SafeMemberPermissions_Parameter Permissions
+        { get; set; }
+        //= new SafeMemberPermissions_Parameter();
+
+    }
+
+
     /// <summary>
     /// Class describing a member and its save permissions
     /// </summary>
-    public class SafeMember_Result : RestApiMemberSessionInfo
+    public class SafeMember_Parameter : RestApiParameterSessionInfo
     {
         public string UserName
         { get; set; }
         = string.Empty;
 
-        public ListSafeMemberPermission_Result Permissions
+        public ListSafeMemberPermission_Parameter Permissions
         { get; set; }
-        = new ListSafeMemberPermission_Result();      
+        = new ListSafeMemberPermission_Parameter();      
     }
 
     /// <summary>
     /// List of avaiable permissions returned by function List-Safemembers
     /// </summary>
-    public class ListSafeMemberPermission_Result : RestApiMember
+    public class ListSafeMemberPermission_Parameter : RestApiParameter
     {
         public bool Add
         { get; set; }
@@ -78,7 +138,7 @@ namespace CyberArk.WebApi.Container
     /// <summary>
     /// List of Permissions for function Add-SafeMember or Update-SafeMember
     /// </summary>
-    public class AddSafeMemberPermissions : RestApiMember
+    public class SafeMemberPermissions_Parameter : RestApiParameter
     {
         public bool UseAccounts
         { get; set; }
@@ -128,9 +188,25 @@ namespace CyberArk.WebApi.Container
     #region Powershell Result
     public class PSSafeMembers_Result : PSApiResult
     {
-        public SafeMember_Result[] members
+        public SafeMember_Parameter[] members
         { get; set; }
-            = new SafeMember_Result[] { };
+            = new SafeMember_Parameter[] { };
+    }
+
+    public class PSAddSafeMembers_Result : PSApiResultSessionInfo
+    {
+        public string SafeName
+        { get; set; }
+
+        public string MemberName
+        { get; set; }
+
+        public string MembershipExpirationDate
+        { get; set; }
+
+        public SafeMemberPermissions_Parameter Permissions
+        { get; set; }
+        = new SafeMemberPermissions_Parameter();
     }
     #endregion
 

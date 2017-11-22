@@ -15,7 +15,7 @@ namespace CyberArk.WebApi.Container
     /// <summary>
     /// Base Parameter which always have to be used for input
     /// </summary>
-    public abstract class RestApiParameter : CAContainer
+    public abstract class RestApiMethod : CAContainer
     {}
 
     /// <summary>
@@ -25,15 +25,15 @@ namespace CyberArk.WebApi.Container
     { }
 
     /// <summary>
-    /// Defines a Base Rest Api Member
+    /// Defines a Base Rest Api Parameter used in Method or Results
     /// </summary>
-    public abstract class RestApiMember : CAContainer
+    public abstract class RestApiParameter : CAContainer
     { }
 
     /// <summary>
-    /// Defines an Api Member containing sessioninformation
+    /// Defines an Api Parameter containing sessioninformation
     /// </summary>
-    public class RestApiMemberSessionInfo : RestApiMember, ISessionInformation
+    public class RestApiParameterSessionInfo : RestApiParameter, ISessionInformation
     {
         public Hashtable sessionToken
         { get; set; }
@@ -66,7 +66,7 @@ namespace CyberArk.WebApi.Container
 
     #region Nullable Classes
 
-    public class NullableInput : RestApiParameter
+    public class NullableInput : RestApiMethod
     {}
 
     public class NullableOutput : RestApiResult

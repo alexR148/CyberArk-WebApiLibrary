@@ -3,7 +3,7 @@
 namespace CyberArk.WebApi.Container
 {
     #region Parameter
-    class AuthLogon : RestApiParameter
+    class AuthLogon : RestApiMethod
     {
         public string username
         { get; set; }

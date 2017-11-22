@@ -23,7 +23,7 @@ namespace CyberArk.WebApi
         /// <param name="inputParameter">InputParameter Value of Type T</param>
         /// <param name="wrResult">The result of WebResponse</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter, out WebResponseResult wrResult) where T : RestApiParameter where U : RestApiResult
+        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter, out WebResponseResult wrResult) where T : RestApiMethod where U : RestApiResult
         {
             onNewMessage(string.Format("Do sendRequest Api Call: {0},{1},{2}.",uri,method,contenttype), LogMessageType.Debug);
             
@@ -110,10 +110,26 @@ namespace CyberArk.WebApi
         /// <param name="contenttype">The content type</param>        
         /// <param name="inputParameter">InputParameter Value of Type T</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter,out WebResponseResult wrResult) where T : RestApiParameter where U : RestApiResult
+        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter,out WebResponseResult wrResult) where T : RestApiMethod where U : RestApiResult
         {
             return sendRequest<T, U>(uri, method, contenttype, null, inputParameter,out wrResult);
-        }     
+        }
+
+
+        /// <summary>
+        /// Test Deserialization of a json string 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public T TestDeserialization<T>(string json)
+        {
+            //Deserialize Result
+            JavaScriptSerializer ds = new JavaScriptSerializer();
+            return ds.Deserialize<T>(json);
+        }
+
+
     }
 
     /// <summary>

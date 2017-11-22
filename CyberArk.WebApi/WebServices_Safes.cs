@@ -22,7 +22,7 @@ namespace CyberArk.WebApi
             string uri       = WebURI + URI;
 
             //Create Safe Add Object
-            AddSafe_Parameter safeParameters               = new AddSafe_Parameter();
+            AddSafe_Method safeParameters               = new AddSafe_Method();
             safeParameters.safe.SafeName                   = SafeName;
             safeParameters.safe.NumberOfVersionsRetention  = NumberOfVersionsRetention;
             safeParameters.safe.NumberOfDaysRetention      = NumberOfDaysRetention;
@@ -33,7 +33,7 @@ namespace CyberArk.WebApi
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
             WebResponseResult wrResult;
-            AddSafe_Result result = sendRequest<AddSafe_Parameter, AddSafe_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters,out wrResult);
+            AddSafe_Result result = sendRequest<AddSafe_Method, AddSafe_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters,out wrResult);
 
 
             //Get Result
