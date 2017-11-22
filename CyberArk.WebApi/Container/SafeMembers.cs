@@ -71,7 +71,7 @@ namespace CyberArk.WebApi.Container
         //public Hashtable Permissions
         //{ get; set; }
        
-        public SafeMemberPermissions_Parameter Permissions
+        public object[] Permissions
         { get; set; }
         //= new SafeMemberPermissions_Parameter();
 

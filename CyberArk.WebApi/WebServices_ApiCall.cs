@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace CyberArk.WebApi
 {
@@ -127,6 +128,13 @@ namespace CyberArk.WebApi
             //Deserialize Result
             JavaScriptSerializer ds = new JavaScriptSerializer();
             return ds.Deserialize<T>(json);
+        }
+
+        public T TestJsonNetDeserialization<T>(string json)
+        {
+            
+            T result =  JsonConvert.DeserializeObject<T>(json);
+            return result;
         }
 
 

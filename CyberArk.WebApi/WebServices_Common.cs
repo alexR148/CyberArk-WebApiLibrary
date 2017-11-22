@@ -3,6 +3,7 @@ using CyberArk.WebApi.Internal;
 using CyberArk.WebApi.Logging;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace CyberArk.WebApi
@@ -211,6 +212,41 @@ namespace CyberArk.WebApi
                 }
                                             
             }          
-        }         
+        }
+
+        public T objectArrayToHashtabe<T>(object[] oarr) where T : new()
+        {
+            T result     = new T();
+            Type Tresult = result.GetType();
+
+
+            foreach (var b in oarr)
+            {
+                Dictionary<string, object> ds = b as Dictionary<string, object>;
+                if (ds != null)
+                {
+                    object name;
+                    object value;
+                    ds.TryGetValue("Key", out name);
+                    ds.TryGetValue("Value", out value);
+
+                    PropertyInfo Prop = Tresult.GetProperty(name.ToString());
+
+                    //Set value to des 
+                    if (Prop != null)
+                    {
+                        if (Prop.PropertyType == value.GetType())
+                            Prop.SetValue(result, value);
+                    }
+
+                    //Clean
+                    name  = null;
+                    value = null;
+                    Prop  = null;
+                }  
+            }         
+            return result;
+        }
+                 
     }
 }
