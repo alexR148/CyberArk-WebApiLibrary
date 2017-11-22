@@ -206,7 +206,7 @@ namespace CyberArk.WebApi.Container
 
         public SafeMemberPermissions_Parameter Permissions
         { get; set; }
-        = new SafeMemberPermissions_Parameter();
+        
     }
     #endregion
 

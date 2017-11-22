@@ -110,8 +110,14 @@ namespace CyberArk.WebApi
             if (result != null)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSAddSafeMembers_Result>(result.member);
-                psResult.SafeName = SafeName; 
+                psResult                = createPSApiResults<PSAddSafeMembers_Result>(result.member);
+
+                //Add additional Info safename
+                psResult.SafeName       = SafeName;
+
+                //Add additional Info Permission
+                psResult.Permissions    = objectArrayToHashtabe<SafeMemberPermissions_Parameter>(result.member.Permissions); 
+
                 onNewMessage(string.Format("Member {1} successfully added to safe '{0}'", SafeName,MemberName), LogMessageType.Info);
             }
             else

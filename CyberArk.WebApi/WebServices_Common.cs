@@ -133,51 +133,12 @@ namespace CyberArk.WebApi
         }
 
 
-        ///// <summary>
-        ///// Copies property values from a hierarchic object to a flat object. Flat objects are neccessary for Powershell Piping 
-        ///// </summary>
-        ///// <param name="source"></param>
-        ///// <param name="dest"></param>
-        //private void createPSApiResult_toFlat_recurse(object source, object dest)
-        //{
-        //    //Abort if one of the two object has null values
-        //    if (source == null || dest == null) return;
+        
 
-            //    //Get type of both
-            //    Type TSource = source.GetType();
-            //    Type TDest   = dest.GetType();
-
-            //    //Get all properties of source object
-            //    PropertyInfo[] propertiesSource = TSource.GetProperties();
-
-            //    //Iterate all properties
-            //    foreach (PropertyInfo prop in propertiesSource)
-            //    {              
-            //        //Get value
-            //        var value = prop.GetValue(source);
-
-            //        //Check value. Do nothing if result is null
-            //        if (value != null)
-            //        {
-            //            //Get type of result
-            //            Type Tvalue = value.GetType();
-
-            //            //if type is a APIMember then copy Properties. For PS it is neccessary that the result is flat
-            //            if (Tvalue.IsSubclassOf(typeof(RestApiMember)))                    
-            //                createPSApiResult_toFlat_recurse(value, dest);                   
-            //            else
-            //            {
-            //                //Get dest property
-            //                PropertyInfo destProp = TDest.GetProperty(prop.Name);
-
-            //                //Set value to dest property
-            //                if (destProp != null)
-            //                    destProp.SetValue(dest, value);
-            //            }
-            //        }                
-            //    }         
-            //}
-
+        /// <summary>
+        /// Applies sessioninformation to the currentobject if it implements ISessionInformation
+        /// </summary>
+        /// <param name="source"></param>
         private void applySessionInfo(object source)
         {
             ISessionInformation resultTmp = source as ISessionInformation;
@@ -214,14 +175,24 @@ namespace CyberArk.WebApi
             }          
         }
 
-        public T objectArrayToHashtabe<T>(object[] oarr) where T : new()
+        /// <summary>
+        /// Converts a deserialized json hashtable to an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="oarr"></param>
+        /// <returns></returns>
+        private T objectArrayToHashtabe<T>(object[] oarr) where T : new()
         {
+            //Create a new instance of the input type
             T result     = new T();
+
+            //Get type of the inputtype
             Type Tresult = result.GetType();
 
-
+            //Iterate each item of the object array
             foreach (var b in oarr)
             {
+                //Check if item is a Dictionary
                 Dictionary<string, object> ds = b as Dictionary<string, object>;
                 if (ds != null)
                 {
@@ -232,10 +203,12 @@ namespace CyberArk.WebApi
 
                     PropertyInfo Prop = Tresult.GetProperty(name.ToString());
 
-                    //Set value to des 
+                    //Check if property exist
                     if (Prop != null)
                     {
+                        //compare property type and value type
                         if (Prop.PropertyType == value.GetType())
+                            //Set propertyvalue
                             Prop.SetValue(result, value);
                     }
 
@@ -247,6 +220,53 @@ namespace CyberArk.WebApi
             }         
             return result;
         }
-                 
+
+
+        ///// <summary>
+        ///// Copies property values from a hierarchic object to a flat object. Flat objects are neccessary for Powershell Piping 
+        ///// </summary>
+        ///// <param name="source"></param>
+        ///// <param name="dest"></param>
+        //private void createPSApiResult_toFlat_recurse(object source, object dest)
+        //{
+        //    //Abort if one of the two object has null values
+        //    if (source == null || dest == null) return;
+
+        //    //Get type of both
+        //    Type TSource = source.GetType();
+        //    Type TDest   = dest.GetType();
+
+        //    //Get all properties of source object
+        //    PropertyInfo[] propertiesSource = TSource.GetProperties();
+
+        //    //Iterate all properties
+        //    foreach (PropertyInfo prop in propertiesSource)
+        //    {              
+        //        //Get value
+        //        var value = prop.GetValue(source);
+
+        //        //Check value. Do nothing if result is null
+        //        if (value != null)
+        //        {
+        //            //Get type of result
+        //            Type Tvalue = value.GetType();
+
+        //            //if type is a APIMember then copy Properties. For PS it is neccessary that the result is flat
+        //            if (Tvalue.IsSubclassOf(typeof(RestApiMember)))                    
+        //                createPSApiResult_toFlat_recurse(value, dest);                   
+        //            else
+        //            {
+        //                //Get dest property
+        //                PropertyInfo destProp = TDest.GetProperty(prop.Name);
+
+        //                //Set value to dest property
+        //                if (destProp != null)
+        //                    destProp.SetValue(dest, value);
+        //            }
+        //        }                
+        //    }         
+        //}
+
+
     }
 }
