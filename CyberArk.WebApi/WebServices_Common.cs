@@ -175,51 +175,7 @@ namespace CyberArk.WebApi
             }          
         }
 
-        /// <summary>
-        /// Converts a deserialized json hashtable to an object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="oarr"></param>
-        /// <returns></returns>
-        private T objectArrayToHashtabe<T>(object[] oarr) where T : new()
-        {
-            //Create a new instance of the input type
-            T result     = new T();
-
-            //Get type of the inputtype
-            Type Tresult = result.GetType();
-
-            //Iterate each item of the object array
-            foreach (var b in oarr)
-            {
-                //Check if item is a Dictionary
-                Dictionary<string, object> ds = b as Dictionary<string, object>;
-                if (ds != null)
-                {
-                    object name;
-                    object value;
-                    ds.TryGetValue("Key", out name);
-                    ds.TryGetValue("Value", out value);
-
-                    PropertyInfo Prop = Tresult.GetProperty(name.ToString());
-
-                    //Check if property exist
-                    if (Prop != null)
-                    {
-                        //compare property type and value type
-                        if (Prop.PropertyType == value.GetType())
-                            //Set propertyvalue
-                            Prop.SetValue(result, value);
-                    }
-
-                    //Clean
-                    name  = null;
-                    value = null;
-                    Prop  = null;
-                }  
-            }         
-            return result;
-        }
+       
 
 
         ///// <summary>

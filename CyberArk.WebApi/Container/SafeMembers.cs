@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using CyberArk.WebApi.Internal;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace CyberArk.WebApi.Container
 {
@@ -29,7 +32,7 @@ namespace CyberArk.WebApi.Container
             = new SafeMember_Parameter[] { };       
     }
 
-    public class AddSafeMember_Result : RestApiResult
+    class AddSafeMember_Result : RestApiResult
     {
         public AddSafeMember2_Parameter member
         { get; set; }
@@ -57,7 +60,7 @@ namespace CyberArk.WebApi.Container
     }
 
 
-    public class AddSafeMember2_Parameter : RestApiParameter
+    class AddSafeMember2_Parameter : RestApiParameter
     {
         public string MemberName
         { get; set; }
@@ -67,14 +70,10 @@ namespace CyberArk.WebApi.Container
 
         public string SearchIn
         { get; set; }
-
-        //public Hashtable Permissions
-        //{ get; set; }
-       
+              
         public object[] Permissions
         { get; set; }
-        //= new SafeMemberPermissions_Parameter();
-
+        
     }
 
 
@@ -135,54 +134,94 @@ namespace CyberArk.WebApi.Container
         { get; set; }
     }
 
-    /// <summary>
-    /// List of Permissions for function Add-SafeMember or Update-SafeMember
-    /// </summary>
     public class SafeMemberPermissions_Parameter : RestApiParameter
     {
         public bool UseAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool RetrieveAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool ListAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool AddAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool UpdateAccountContent
-        { get; set; }
+        {
+            get; set;
+        }
         public bool UpdateAccountProperties
-        { get; set; }
+        {
+            get; set;
+        }
         public bool InitiateCPMAccountManagementOperations
-        { get; set; }
+        {
+            get; set;
+        }
         public bool SpecifyNextAccountContent
-        { get; set; }
+        {
+            get; set;
+        }
         public bool RenameAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool DeleteAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool UnlockAccounts
-        { get; set; }
+        {
+            get; set;
+        }
         public bool ManageSafe
-        { get; set; }
+        {
+            get; set;
+        }
         public bool ManageSafeMembers
-        { get; set; }
+        {
+            get; set;
+        }
         public bool BackupSafe
-        { get; set; }
+        {
+            get; set;
+        }
         public bool ViewAuditLog
-        { get; set; }
+        {
+            get; set;
+        }
         public bool ViewSafeMembers
-        { get; set; }
+        {
+            get; set;
+        }
         public int RequestsAuthorizationLevel
-        { get; set; }
+        {
+            get; set;
+        }
         public bool AccessWithoutConfirmation
-        { get; set; }
+        {
+            get; set;
+        }
         public bool CreateFolders
-        { get; set; }
+        {
+            get; set;
+        }
         public bool DeleteFolders
-        { get; set; }
+        {
+            get; set;
+        }
         public bool MoveAccountsAndFolders
-        { get; set; }
-    }   
+        {
+            get; set;
+        }
+    }
+
     #endregion
 
     #region Powershell Result
@@ -204,7 +243,7 @@ namespace CyberArk.WebApi.Container
         public string MembershipExpirationDate
         { get; set; }
 
-        public SafeMemberPermissions_Parameter Permissions
+        public Hashtable Permissions
         { get; set; }
         
     }

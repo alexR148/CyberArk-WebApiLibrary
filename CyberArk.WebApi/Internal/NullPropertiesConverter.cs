@@ -19,6 +19,7 @@ namespace CyberArk.WebApi.Internal
 
             //Get all Properties
             PropertyInfo[] properties = type.GetProperties();
+           
 
             //Get values from dictionary and write them to the instance
             foreach (PropertyInfo prop in properties)
@@ -71,5 +72,7 @@ namespace CyberArk.WebApi.Internal
         {
             get { return GetType().Assembly.GetTypes();}
         }
+
+        
     }
 }

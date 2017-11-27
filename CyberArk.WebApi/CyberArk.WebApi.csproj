@@ -50,7 +50,7 @@
     <Compile Include="Container\Interfaces.cs" />
     <Compile Include="Container\SafeMembers.cs" />
     <Compile Include="Container\Safes.cs" />
-    <Compile Include="Extensions\HashtableHelper.cs" />
+    <Compile Include="Internal\HashtableHelper.cs" />
     <Compile Include="Internal\AuthenticationType.cs" />
     <Compile Include="Internal\NullPropertiesConverter.cs" />
     <Compile Include="Logging\Log.cs" />

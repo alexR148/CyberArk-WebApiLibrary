@@ -1,5 +1,5 @@
 ﻿using CyberArk.WebApi.Container;
-using CyberArk.WebApi.Extensions;
+using CyberArk.WebApi.Internal;
 using CyberArk.WebApi.Logging;
 using System;
 using System.Collections;
@@ -111,17 +111,13 @@ namespace CyberArk.WebApi
             {
                 //Create PSResult
                 psResult                = createPSApiResults<PSAddSafeMembers_Result>(result.member);
-
-                //Add additional Info safename
+                psResult.Permissions    = HashtableHelper.DeserializeArrayToHashtable(result.member.Permissions);                            
                 psResult.SafeName       = SafeName;
-
-                //Add additional Info Permission
-                psResult.Permissions    = objectArrayToHashtabe<SafeMemberPermissions_Parameter>(result.member.Permissions); 
-
+              
                 onNewMessage(string.Format("Member {1} successfully added to safe '{0}'", SafeName,MemberName), LogMessageType.Info);
             }
             else
-                onNewMessage(string.Format("Unable to add member {1} to safe '{0}'", SafeName,MemberName), LogMessageType.Error);
+                onNewMessage(string.Format("Unable to add member {1} to safe '{0}'", SafeName,MemberName), LogMessageType.Warning);
 
             return psResult;
 
