@@ -22,21 +22,20 @@ namespace CyberArk.WebApi
             NullableInput memberParameters = new NullableInput();
             onNewMessage(string.Format("List members of safe '{0}'", SafeName), LogMessageType.Info);
 
-            //Do Api Call                       
-            ListSafeMembers_Result result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, memberParameters, out result);
+            //Do Api Call                                  
+            WebResponseResult< ListSafeMembers_Result> wrResult = sendRequest< ListSafeMembers_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, memberParameters);
 
             //Get Result
             PSSafeMembers_Result psResult = null;
-            if (wrResult != null && result != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
+            if (wrResult != null && wrResult.Data != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 //apply sessioninformation to result (neccessary for Powershell)
-                foreach (SafeMember_Parameter r in result.members)
+                foreach (SafeMember_Parameter r in wrResult.Data.members)
                     applySessionInfo(r);
 
                                                 
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeMembers_Result>(result);
+                psResult = createPSApiResults<PSSafeMembers_Result>(wrResult.Data);
                 onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);               
             }
             else
@@ -101,17 +100,16 @@ namespace CyberArk.WebApi
             //Add Hashtable
             memberParameters.member.Permissions = permissions;
 
-            //Do Api Call                       
-            AddSafeMember_Result result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, SessionToken, memberParameters,out result);
+            //Do Api Call                                  
+            WebResponseResult<AddSafeMember_Result> wrResult = sendRequest<AddSafeMember_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, SessionToken, memberParameters);
             
             //Get Result
             PSAddSafeMembers_Result psResult = null;
-            if (result != null && wrResult != null && wrResult.StatusCode== System.Net.HttpStatusCode.Created)
+            if (wrResult != null && wrResult.Data != null && wrResult.StatusCode== System.Net.HttpStatusCode.Created)
             {
                 //Create PSResult
-                psResult                = createPSApiResults<PSAddSafeMembers_Result>(result.member);
-                psResult.Permissions    = HashtableHelper.DeserializeArrayToHashtable(result.member.Permissions);                            
+                psResult                = createPSApiResults<PSAddSafeMembers_Result>(wrResult.Data.member);
+                psResult.Permissions    = HashtableHelper.DeserializeArrayToHashtable(wrResult.Data.member.Permissions);                            
                 psResult.SafeName       = SafeName;
               
                 onNewMessage(string.Format("Member {1} successfully added to safe '{0}'", SafeName,MemberName), LogMessageType.Info);

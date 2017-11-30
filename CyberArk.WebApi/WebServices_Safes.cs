@@ -31,17 +31,16 @@ namespace CyberArk.WebApi
             safeParameters.safe.ManagingCPM                = ManagingCPM;
 
             //Do Api Call
-            onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            AddSafe_Result result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters,out result);
+            onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);            
+            WebResponseResult<AddSafe_Result> wrResult = sendRequest<AddSafe_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters);
 
 
             //Get Result
             PSSafe_Result psResult = null; 
-            if (result != null && wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.Created)
+            if (wrResult != null && wrResult.Data != null && wrResult.StatusCode == System.Net.HttpStatusCode.Created)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafe_Result>(result.AddSafeResult);                
+                psResult = createPSApiResults<PSSafe_Result>(wrResult.Data.AddSafeResult);                
                 onNewMessage(string.Format("Safe '{0}' successfully created", SafeName), LogMessageType.Info);                           
             }
             else
@@ -65,16 +64,15 @@ namespace CyberArk.WebApi
             NullableInput  safeParameters = new NullableInput();
             
             //Do Api Call
-            onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            GetSafe_Result result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, safeParameters,out result);
+            onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);           
+            WebResponseResult<GetSafe_Result> wrResult = sendRequest<GetSafe_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, safeParameters);
 
             //Get Result
             PSSafe_Result psResult = null;
-            if (result != null && wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
+            if (wrResult != null && wrResult.Data != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 //Create PSResult
-                psResult = createPSApiResults<PSSafe_Result>(result.GetSafeResult);                
+                psResult = createPSApiResults<PSSafe_Result>(wrResult.Data.GetSafeResult);                
                 onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);              
             }
             else
@@ -94,9 +92,8 @@ namespace CyberArk.WebApi
             string uri = System.Uri.EscapeUriString(WebURI + URI + "/" + SafeName);
           
             //Do Api Call
-            onNewMessage(string.Format("Sending RemoveSafe request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            NullableOutput result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE, SessionToken, new NullableInput(),out result);
+            onNewMessage(string.Format("Sending RemoveSafe request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE), LogMessageType.Debug);          
+            WebResponseResult<NullableOutput> wrResult = sendRequest<NullableOutput>(uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE, SessionToken, new NullableInput());
 
             //Get Result          
             if (wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)

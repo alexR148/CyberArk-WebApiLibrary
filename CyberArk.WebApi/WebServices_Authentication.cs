@@ -36,7 +36,8 @@ namespace CyberArk.WebApi
         {
             const string URI     = @"/WebServices/auth/Cyberark/CyberArkAuthenticationService.svc/Logon";
             string uri           = WebURI + URI;
-          
+            uri = System.Uri.EscapeUriString(uri);
+
             onNewMessage(string.Format("LogOn to PasswordVault using CyberArk Authentication with user '{0}'",username), LogMessageType.Info);
 
             //Set ConnectionNumber
@@ -53,15 +54,14 @@ namespace CyberArk.WebApi
             onNewMessage(string.Format("Authentication Logon Object successfully created."), LogMessageType.Verbose);
 
             //Do Api Call
-            onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'",uri, VERB_METHOD_POST,JSON_CONTENT_TYPE), LogMessageType.Debug);
-            AuthLogonResult result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter, out result);
+            onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'",uri, VERB_METHOD_POST,JSON_CONTENT_TYPE), LogMessageType.Debug);          
+            WebResponseResult< AuthLogonResult> wrResult = sendRequest<AuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter);
           
             //Get Result
-            if (wrResult != null && result != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
+            if (wrResult != null && wrResult.Data != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 onNewMessage(string.Format("LogOn request successfully sent to '{0}'", uri), LogMessageType.Verbose);
-                SessionToken.Add(SESSION_TOKEN_HEADER, result.CyberArkLogonResult);
+                SessionToken.Add(SESSION_TOKEN_HEADER, wrResult.Data.CyberArkLogonResult);
                 Authenticationtype  = AuthenticationType.CyberArk;
                 onNewMessage(string.Format("User '{0}' successfully connected to PasswordVault", username), LogMessageType.Info);
             }
@@ -95,11 +95,11 @@ namespace CyberArk.WebApi
                 default:
                     return;  
             }
+            uri = System.Uri.EscapeUriString(uri);
 
             //Do Api Call
-            onNewMessage(string.Format("Sending LogOff request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            NullableOutput result;
-            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, new NullableInput(),out result);
+            onNewMessage(string.Format("Sending LogOff request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);           
+            WebResponseResult<NullableOutput> wrResult = sendRequest<NullableOutput>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, new NullableInput());
 
             //Reset Token
             SessionToken.Clear();
@@ -128,6 +128,7 @@ namespace CyberArk.WebApi
         {
             const string URI = @"/WebServices/auth/Shared/RestfulAuthenticationService.svc/Logon";
             string uri       = WebURI + URI;
+            uri = System.Uri.EscapeUriString(uri);
 
             onNewMessage(string.Format("LogOn to PasswordVault using CyberArk Shared Authentication"), LogMessageType.Info);
 
@@ -136,18 +137,17 @@ namespace CyberArk.WebApi
             onNewMessage(string.Format("Authentication Logon Object successfully created."), LogMessageType.Verbose);
 
             //Do Api Call
-            onNewMessage(string.Format("Sending Shared LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            SharedAuthLogonResult result;
-            WebResponseResult wrResult = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter,out result);
+            onNewMessage(string.Format("Sending Shared LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);            
+            WebResponseResult<SharedAuthLogonResult> wrResult = sendRequest<SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter);
 
             //Validate result
-            if (result != null && wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK) 
+            if (wrResult != null && wrResult.Data != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK) 
             {                       
                 Authenticationtype  = AuthenticationType.SharedLogon;
                 onNewMessage(string.Format("Successfully connected to PasswordVault"), LogMessageType.Info);
 
                 //Get Result
-                SessionToken.Add(SESSION_TOKEN_HEADER, result.LogonResult);
+                SessionToken.Add(SESSION_TOKEN_HEADER, wrResult.Data.LogonResult);
                 Authenticationtype = AuthenticationType.SharedLogon;
                 
             }
