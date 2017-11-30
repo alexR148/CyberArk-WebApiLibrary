@@ -20,14 +20,13 @@ namespace CyberArk.Cmd
 
 
 
-            //string test = "{ \"member\":{ \"MemberName\":\"svcsdk\",\"MembershipExpirationDate\":\"\",\"Permissions\":[{\"Key\":\"UseAccounts\",\"Value\":true},{\"Key\":\"RetrieveAccounts\",\"Value\":true},{\"Key\":\"ListAccounts\",\"Value\":true},{\"Key\":\"AddAccounts\",\"Value\":false},{\"Key\":\"UpdateAccountContent\",\"Value\":false},{\"Key\":\"UpdateAccountProperties\",\"Value\":false},{\"Key\":\"InitiateCPMAccountManagementOperations\",\"Value\":false},{\"Key\":\"SpecifyNextAccountContent\",\"Value\":false},{\"Key\":\"RenameAccounts\",\"Value\":false},{\"Key\":\"DeleteAccounts\",\"Value\":false},{\"Key\":\"UnlockAccounts\",\"Value\":false},{\"Key\":\"ManageSafe\",\"Value\":false},{\"Key\":\"ManageSafeMembers\",\"Value\":false},{\"Key\":\"BackupSafe\",\"Value\":false},{\"Key\":\"ViewAuditLog\",\"Value\":true},{\"Key\":\"ViewSafeMembers\",\"Value\":true},{\"Key\":\"AccessWithoutConfirmation\",\"Value\":false},{\"Key\":\"CreateFolders\",\"Value\":false},{\"Key\":\"DeleteFolders\",\"Value\":false},{\"Key\":\"MoveAccountsAndFolders\",\"Value\":false},{\"Key\":\"RequestsAuthorizationLevel\",\"Value\":0}],\"SearchIn\":\"Vault\"}}";
-            //dynamic bla = ws.TestDeserialization<SafeMemberPermissions_Array>(test);
-            //SafeMemberPermissions_Parameter h = ws.objectArrayToHashtabe< SafeMemberPermissions_Parameter>(bla.member.Permissions); 
-            //return;
+           
 
-            ws.LogOn(PD.GetUser(),PD.GetPW().ToSecureString());
-            ws.Add_PASSafe("75054PU", 12, 0, "75054PU");
-            dynamic bla = ws.Add_PASSafeMember("75054PU", "svcsdk", "Vault",
+            ws.LogOn(PD.GetUser(), PD.GetPW () );
+            ws.Add_PASSafe("bla", 12, 0);
+            
+            
+            dynamic bla = ws.Add_PASSafeMember("bla", "svcsdk", "Vault",
                 UseAccounts: false,
                 RetrieveAccounts: false,
                 ListAccounts: false,
@@ -51,10 +50,9 @@ namespace CyberArk.Cmd
                 MoveAccountsAndFolders: false);
 
 
-           
+            ws.Remove_PASSafe("bla");
+            ws.LogOff();
             
-
-            ws.LogOff(); 
         }
 
         private static void Ws_NewMessage(object sender, MessageArgs e)

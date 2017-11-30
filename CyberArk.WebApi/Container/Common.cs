@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Net;
 
 namespace CyberArk.WebApi.Container
 {
@@ -22,8 +23,8 @@ namespace CyberArk.WebApi.Container
     /// Base result Parameters which always will be returned. Neccessary for Powershell
     /// </summary>
     public abstract class RestApiResult : CAContainer
-    { }
-
+    {}
+  
     /// <summary>
     /// Defines a Base Rest Api Parameter used in Method or Results
     /// </summary>

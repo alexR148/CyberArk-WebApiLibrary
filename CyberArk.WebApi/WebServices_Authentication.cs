@@ -54,11 +54,11 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'",uri, VERB_METHOD_POST,JSON_CONTENT_TYPE), LogMessageType.Debug);
-            WebResponseResult wrResult;
-            AuthLogonResult result = sendRequest<AuthLogon, AuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter,out wrResult);
-            
+            AuthLogonResult result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter, out result);
+          
             //Get Result
-            if (result != null)
+            if (wrResult != null && result != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 onNewMessage(string.Format("LogOn request successfully sent to '{0}'", uri), LogMessageType.Verbose);
                 SessionToken.Add(SESSION_TOKEN_HEADER, result.CyberArkLogonResult);
@@ -98,14 +98,16 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOff request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            WebResponseResult wrResult;
-            sendRequest<NullableInput, NullableOutput>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, new NullableInput(),out wrResult);
+            NullableOutput result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, new NullableInput(),out result);
 
             //Reset Token
             SessionToken.Clear();
             ConnectionNumber   = string.Empty;
             Authenticationtype = AuthenticationType.None;
-            onNewMessage(string.Format("Session successfully disconnected. Sessiontoken successfully resetted."), LogMessageType.Info);
+
+            if (wrResult.StatusCode == System.Net.HttpStatusCode.OK)
+                onNewMessage(string.Format("Session successfully disconnected. Sessiontoken successfully resetted."), LogMessageType.Info);
         }
 
         /// <summary>
@@ -135,11 +137,11 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending Shared LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            WebResponseResult wrResult;
-            SharedAuthLogonResult result = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter,out wrResult);
+            SharedAuthLogonResult result;
+            WebResponseResult wrResult = sendRequest<NullableInput, SharedAuthLogonResult>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, logonParameter,out result);
 
             //Validate result
-            if (result != null)
+            if (result != null && wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK) 
             {                       
                 Authenticationtype  = AuthenticationType.SharedLogon;
                 onNewMessage(string.Format("Successfully connected to PasswordVault"), LogMessageType.Info);

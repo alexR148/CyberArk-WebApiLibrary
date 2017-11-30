@@ -17,26 +17,27 @@ namespace CyberArk.WebApi
         {
             const string URI = @"/WebServices/PIMServices.svc/Safes";
             string uri       = System.Uri.EscapeUriString(string.Format ("{0}{1}/{2}/Members", WebURI,URI,SafeName));
-
+            
             //Create Safe Add Object
             NullableInput memberParameters = new NullableInput();
             onNewMessage(string.Format("List members of safe '{0}'", SafeName), LogMessageType.Info);
 
-            //Do Api Call            
-            WebResponseResult wrResult;
-            ListSafeMembers_Result result = sendRequest<NullableInput, ListSafeMembers_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, memberParameters,out wrResult);
-
-            //apply sessioninformation to result (neccessary for Powershell)
-            foreach (SafeMember_Parameter r in result.members)
-                applySessionInfo(r);
+            //Do Api Call                       
+            ListSafeMembers_Result result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, memberParameters, out result);
 
             //Get Result
             PSSafeMembers_Result psResult = null;
-            if (result != null)
+            if (wrResult != null && result != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
+                //apply sessioninformation to result (neccessary for Powershell)
+                foreach (SafeMember_Parameter r in result.members)
+                    applySessionInfo(r);
+
+                                                
                 //Create PSResult
-                psResult = createPSApiResults<PSSafeMembers_Result>(result);                
-                onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);
+                psResult = createPSApiResults<PSSafeMembers_Result>(result);
+                onNewMessage(string.Format("Safe '{0}' successfully queried", SafeName), LogMessageType.Info);               
             }
             else
                 onNewMessage(string.Format("Unable to query safe '{0}'", SafeName), LogMessageType.Error);
@@ -100,14 +101,13 @@ namespace CyberArk.WebApi
             //Add Hashtable
             memberParameters.member.Permissions = permissions;
 
-            //Do Api Call            
-            WebResponseResult wrResult;
-            AddSafeMember_Result result = sendRequest<AddSafeMember_Method, AddSafeMember_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, SessionToken, memberParameters, out wrResult);
-
-
+            //Do Api Call                       
+            AddSafeMember_Result result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE, SessionToken, memberParameters,out result);
+            
             //Get Result
             PSAddSafeMembers_Result psResult = null;
-            if (result != null)
+            if (result != null && wrResult != null && wrResult.StatusCode== System.Net.HttpStatusCode.Created)
             {
                 //Create PSResult
                 psResult                = createPSApiResults<PSAddSafeMembers_Result>(result.member);

@@ -6,12 +6,82 @@ using System.Net;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Collections;
-
+using System;
 
 namespace CyberArk.WebApi
 {
     public partial class WebServices
     {
+
+        private WebResponseResult sendRequest(string uri, string method, string contenttype, Hashtable header, string bodyAsJson,out string ResultAsJson) 
+        {
+            //Only allow TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            //Create WebRequest
+            WebRequest restRequest  = WebRequest.Create(uri);
+            restRequest.Method      = method;
+            restRequest.ContentType = contenttype;
+            //restRequest.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+
+            //Apply Header
+            if (header != null && header.Count > 0)
+            {
+                foreach (DictionaryEntry de in header)
+                {
+                    string fieldName = de.Key.ToString();
+                    string value     = de.Value.ToString();
+                    restRequest.Headers[fieldName] = value;
+                }
+            }
+
+            //Create WebResponse Result
+            WebResponseResult wrResult = null;
+
+            //Assign null to result object
+            ResultAsJson = null;
+            try
+            {
+                //Only send request for Post method
+                if (restRequest.Method == VERB_METHOD_POST)
+                {
+                    //Send Webrequest
+                    using (Stream requestStream = restRequest.GetRequestStream())
+                    {
+                        //Get Bytes from json 
+                        byte[] inputStringBytes = Encoding.UTF8.GetBytes(bodyAsJson);
+
+                        //Write to stream
+                        requestStream.Write(inputStringBytes, 0, inputStringBytes.Length);
+                    }
+                }
+                //Receive Response
+                WebResponse restResponse;
+
+                using (restResponse = restRequest.GetResponse())
+                {
+                    using (Stream responseStream = restResponse.GetResponseStream())
+                    {
+                        StreamReader sr = new StreamReader(responseStream, Encoding.UTF8);
+                        ResultAsJson = sr.ReadToEnd();                                                                                 
+                    }
+                    HttpWebResponse res = ((HttpWebResponse)(restResponse));
+                    wrResult            = new WebResponseResult() { StatusCode = res.StatusCode, StatusDescription = res.StatusDescription };
+                    onNewMessage(string.Format("{0},{1} - {2}", (int)res.StatusCode, res.StatusCode, res.StatusDescription), LogMessageType.Debug);
+                }               
+                onNewMessage(string.Format("Api Call successfully done."), LogMessageType.Debug);
+               
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse res = ((HttpWebResponse)(ex.Response));
+                wrResult = new WebResponseResult() { StatusCode = res.StatusCode, StatusDescription = res.StatusDescription };
+                onNewMessage(string.Format("{0},{1} - {2} {3}", (int)res.StatusCode, res.StatusCode, ex.Message, res.StatusDescription), LogMessageType.Error);
+            }
+            //Return the result
+            return wrResult;
+        }
+
         /// <summary>
         /// Sends a WebRequest to the URI and receive a result
         /// </summary>
@@ -22,9 +92,9 @@ namespace CyberArk.WebApi
         /// <param name="contenttype">The content type</param>
         /// <param name="sessiontoken">The sessiontoken; can be null</param>
         /// <param name="inputParameter">InputParameter Value of Type T</param>
-        /// <param name="wrResult">The result of WebResponse</param>
+        /// <param name="Result">The result of WebResponse</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter, out WebResponseResult wrResult) where T : RestApiMethod where U : RestApiResult
+        private WebResponseResult sendRequest<T,U>(string uri, string method, string contenttype, Hashtable sessiontoken, T inputParameter, out U Result) where T : RestApiMethod where U : RestApiResult
         {
             onNewMessage(string.Format("Do sendRequest Api Call: {0},{1},{2}.",uri,method,contenttype), LogMessageType.Debug);
             
@@ -40,65 +110,33 @@ namespace CyberArk.WebApi
             else
                 json = @"{}"; //Use empty json
 
-            //Only allow TLS 1.2
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            
-            //Create WebRequest
-            WebRequest restRequest  = WebRequest.Create(uri);
-            restRequest.Method      = method;
-            restRequest.ContentType = contenttype;
-            
+            //Set null value to Result
+            Result = default(U);
 
-            //Apply Sessiontoken
-            if (sessiontoken != null && sessiontoken.Count > 0)
-                restRequest.Headers[SESSION_TOKEN_HEADER] = sessiontoken[SESSION_TOKEN_HEADER].ToString();
+            //create output variable
+            string rawResult;
 
-            U result;
+            //send webrequest
+            WebResponseResult wrResult =  sendRequest(uri, method, contenttype, sessiontoken, json, out rawResult);
+
+            //deserialize result
             try
             {
-                //Only send request for Post method
-                if (restRequest.Method == VERB_METHOD_POST)
+                //Check if result has value
+                if (rawResult != null)
                 {
-                    //Send Webrequest
-                    using (Stream requestStream = restRequest.GetRequestStream())
-                    {
-                        //Get Bytes from json 
-                        byte[] inputStringBytes = Encoding.UTF8.GetBytes(json);
-
-                        //Write to stream
-                        requestStream.Write(inputStringBytes, 0, inputStringBytes.Length);
-                    }
+                    //Do deserialization
+                    JavaScriptSerializer ds = new JavaScriptSerializer();
+                    Result                  = ds.Deserialize<U>(rawResult);
                 }
-                //Receive Response
-                WebResponse restResponse;
-
-                using (restResponse = restRequest.GetResponse())
-                {
-                    using (Stream responseStream = restResponse.GetResponseStream())
-                    {
-                        StreamReader sr  = new StreamReader(responseStream, Encoding.UTF8);
-                        string rawResult = sr.ReadToEnd();
-
-                        //Deserialize Result
-                        JavaScriptSerializer ds = new JavaScriptSerializer();
-                        result                  = ds.Deserialize<U>(rawResult);                                                                 
-                    }
-                    HttpWebResponse res = ((HttpWebResponse)(restResponse));
-                    onNewMessage(string.Format("{0},{1} - {2}", (int)res.StatusCode,res.StatusCode,res.StatusDescription), LogMessageType.Debug);
-                    wrResult = new WebResponseResult() { StatusCode = res.StatusCode, StatusDescription = res.StatusDescription };
-
-                }
-                //Return result
-                onNewMessage(string.Format("Api Call successfully done."), LogMessageType.Debug);
-                return result;
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                HttpWebResponse res = ((HttpWebResponse)(ex.Response));
-                onNewMessage(string.Format("{0},{1} - {2} {3}", (int)res.StatusCode, res.StatusCode,ex.Message,res.StatusDescription  ), LogMessageType.Error);
-                wrResult = new WebResponseResult() { StatusCode = res.StatusCode, StatusDescription = res.StatusDescription };
+                onNewMessage(string.Format("Unable to deserialize JsonResultString to object of type {0}. {1}",typeof(U),ex.Message), LogMessageType.Error);
             }
-            return default(U);
+            
+            //Return Webresponse Result
+            return wrResult;
         }
 
         /// <summary>
@@ -111,9 +149,9 @@ namespace CyberArk.WebApi
         /// <param name="contenttype">The content type</param>        
         /// <param name="inputParameter">InputParameter Value of Type T</param>
         /// <returns>OutputParameter of Type U</returns>
-        private U sendRequest<T, U>(string uri, string method, string contenttype, T inputParameter,out WebResponseResult wrResult) where T : RestApiMethod where U : RestApiResult
+        private WebResponseResult sendRequest<T,U>(string uri, string method, string contenttype, T inputParameter, out U Result) where T : RestApiMethod where U : RestApiResult
         {
-            return sendRequest<T, U>(uri, method, contenttype, null, inputParameter,out wrResult);
+            return sendRequest(uri, method, contenttype, null, inputParameter, out Result);
         }
 
 
@@ -131,6 +169,7 @@ namespace CyberArk.WebApi
         }       
     }
 
+
     /// <summary>
     /// Web Response Result
     /// </summary>
@@ -144,7 +183,7 @@ namespace CyberArk.WebApi
             get
             {
                 return (int)StatusCode;
-            }               
+            }
         }
 
         /// <summary>
@@ -159,6 +198,7 @@ namespace CyberArk.WebApi
         public string StatusDescription
         { get; set; }
     }
+
 }
 
 

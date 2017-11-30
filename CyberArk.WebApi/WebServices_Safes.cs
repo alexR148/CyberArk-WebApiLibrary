@@ -32,13 +32,13 @@ namespace CyberArk.WebApi
 
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            WebResponseResult wrResult;
-            AddSafe_Result result = sendRequest<AddSafe_Method, AddSafe_Result>(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters,out wrResult);
+            AddSafe_Result result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_POST, JSON_CONTENT_TYPE,SessionToken, safeParameters,out result);
 
 
             //Get Result
             PSSafe_Result psResult = null; 
-            if (result != null)
+            if (result != null && wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.Created)
             {
                 //Create PSResult
                 psResult = createPSApiResults<PSSafe_Result>(result.AddSafeResult);                
@@ -66,12 +66,12 @@ namespace CyberArk.WebApi
             
             //Do Api Call
             onNewMessage(string.Format("Sending LogOn request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_POST, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            WebResponseResult wrResult;
-            GetSafe_Result result = sendRequest<NullableInput, GetSafe_Result>(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, safeParameters,out  wrResult);
+            GetSafe_Result result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_GET, JSON_CONTENT_TYPE, SessionToken, safeParameters,out result);
 
             //Get Result
             PSSafe_Result psResult = null;
-            if (result != null)
+            if (result != null && wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 //Create PSResult
                 psResult = createPSApiResults<PSSafe_Result>(result.GetSafeResult);                
@@ -95,11 +95,11 @@ namespace CyberArk.WebApi
           
             //Do Api Call
             onNewMessage(string.Format("Sending RemoveSafe request to '{0}' with Method '{1}' and Content '{2}'", uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE), LogMessageType.Debug);
-            WebResponseResult wrResult;
-            NullableOutput result = sendRequest<NullableInput, NullableOutput>(uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE, SessionToken, new NullableInput(), out wrResult);
+            NullableOutput result;
+            WebResponseResult wrResult = sendRequest(uri, VERB_METHOD_DELETE, JSON_CONTENT_TYPE, SessionToken, new NullableInput(),out result);
 
             //Get Result          
-            if (result != null)
+            if (wrResult != null && wrResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 //Create PSResult               
                 onNewMessage(string.Format("Safe '{0}' successfully deleted", SafeName), LogMessageType.Info);
@@ -107,7 +107,7 @@ namespace CyberArk.WebApi
             else
                 onNewMessage(string.Format("Unable to delete safe '{0}'", SafeName), LogMessageType.Error);
 
-            return result;
+            return new NullableOutput();
         }
 
     }
